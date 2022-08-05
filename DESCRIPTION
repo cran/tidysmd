@@ -1,6 +1,6 @@
 Package: tidysmd
 Title: Tidy Standardized Mean Differences
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person("Malcolm", "Barrett", , "malcolmbarrett@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-0299-5825"))
@@ -12,17 +12,16 @@ URL: https://github.com/malcolmbarrett/tidysmd,
         https://malcolmbarrett.github.io/tidysmd/
 BugReports: https://github.com/malcolmbarrett/tidysmd/issues
 Depends: R (>= 2.10)
-Imports: dplyr, ellipsis, glue, purrr, rlang, smd, stats, tidyr,
-        tidyselect
+Imports: dplyr, purrr, rlang, smd, stats, tidyr, tidyselect
 Suggests: spelling, covr, testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Language: en-US
 NeedsCompilation: no
-Packaged: 2021-10-22 13:45:22 UTC; malcolmbarrett
+Packaged: 2022-08-05 16:32:40 UTC; malcolmbarrett
 Author: Malcolm Barrett [aut, cre] (<https://orcid.org/0000-0003-0299-5825>)
 Maintainer: Malcolm Barrett <malcolmbarrett@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-10-25 07:00:02 UTC
+Date/Publication: 2022-08-05 17:00:05 UTC
