@@ -2,7 +2,7 @@ expect_tidy_smd_tbl <- function(.smds, .rows, .cols = 4, .group = "qsmk") {
   expect_s3_class(.smds, c("tbl_df", "tbl", "data.frame"))
   expect_length(.smds, .cols)
   expect_equal(nrow(.smds), .rows)
-  expect_named(.smds , c("variable", "method", .group, "smd"))
+  expect_named(.smds, c("variable", "method", .group, "smd"))
 }
 
 pull_smd <- function(.smds, .v, .w = "observed") {
@@ -69,19 +69,21 @@ test_that("tidy_smd() works with weights", {
     smd::smd(nhefs_weights$race, nhefs_weights$qsmk)$estimate
   )
 
+  wts <- nhefs_weights$w_ate |> vctrs::vec_data()
+
   expect_equal(
     pull_smd(.smds, "age", "w_ate"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, wts)$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_ate"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, wts)$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_ate"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, wts)$estimate
   )
 })
 
@@ -96,19 +98,21 @@ test_that("tidy_smd() works with weights and no observed", {
 
   expect_tidy_smd_tbl(.smds, .rows = 3)
 
+  wts <- nhefs_weights$w_ate |> vctrs::vec_data()
+
   expect_equal(
     pull_smd(.smds, "age", "w_ate"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, wts)$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_ate"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, wts)$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_ate"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, wts)$estimate
   )
 })
 
@@ -139,47 +143,83 @@ test_that("tidy_smd() works with many weights", {
 
   expect_equal(
     pull_smd(.smds, "age", "w_ate"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ate |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_ate"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ate |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_ate"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ate |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "age", "w_att"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_att)$estimate
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_att |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_att"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_att)$estimate
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_att |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_att"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_att)$estimate
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_att |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "age", "w_atm"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_atm)$estimate
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atm |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_atm"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_atm)$estimate
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atm |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_atm"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_atm)$estimate
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atm |> vctrs::vec_data()
+    )$estimate
   )
 })
 
@@ -210,77 +250,137 @@ test_that("tidy_smd() works with tidyselect", {
 
   expect_equal(
     pull_smd(.smds, "age", "w_ate"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ate |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_ate"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ate |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_ate"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_ate)$estimate
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ate |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "age", "w_att"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_att)$estimate
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_att |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_att"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_att)$estimate
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_att |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_att"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_att)$estimate
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_att |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "age", "w_atm"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_atm)$estimate
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atm |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_atm"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_atm)$estimate
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atm |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_atm"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_atm)$estimate
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atm |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "age", "w_atc"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_atc)$estimate
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atc |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_atc"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_atc)$estimate
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atc |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_atc"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_atc)$estimate
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atc |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "age", "w_ato"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_ato)$estimate
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ato |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "race", "w_ato"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_ato)$estimate
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ato |> vctrs::vec_data()
+    )$estimate
   )
 
   expect_equal(
     pull_smd(.smds, "education", "w_ato"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_ato)$estimate
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ato |> vctrs::vec_data()
+    )$estimate
   )
 })
 
@@ -302,7 +402,11 @@ test_that("standard errors return correctly", {
 
   expect_equal(
     pull_std.error(.smds, "education"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      std.error = TRUE
+    )$std.error
   )
 
   expect_equal(
@@ -312,47 +416,92 @@ test_that("standard errors return correctly", {
 
   expect_equal(
     pull_std.error(.smds, "age", "w_ate"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_ate, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ate |> vctrs::vec_data(),
+      std.error = TRUE
+    )$std.error
   )
 
   expect_equal(
     pull_std.error(.smds, "race", "w_ate"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_ate, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ate |> vctrs::vec_data(),
+      std.error = TRUE
+    )$std.error
   )
 
   expect_equal(
     pull_std.error(.smds, "education", "w_ate"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_ate, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_ate |> vctrs::vec_data(),
+      std.error = TRUE
+    )$std.error
   )
 
   expect_equal(
     pull_std.error(.smds, "age", "w_att"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_att, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_att |> vctrs::vec_data(),
+      std.error = TRUE
+    )$std.error
   )
 
   expect_equal(
     pull_std.error(.smds, "race", "w_att"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_att, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_att |> vctrs::vec_data(),
+      std.error = TRUE
+    )$std.error
   )
 
   expect_equal(
     pull_std.error(.smds, "education", "w_att"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_att, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_att |> vctrs::vec_data(),
+      std.error = TRUE
+    )$std.error
   )
 
   expect_equal(
     pull_std.error(.smds, "age", "w_atm"),
-    smd::smd(nhefs_weights$age, nhefs_weights$qsmk, nhefs_weights$w_atm, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$age,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atm |> vctrs::vec_data(),
+      std.error = TRUE
+    )$std.error
   )
 
   expect_equal(
     pull_std.error(.smds, "race", "w_atm"),
-    smd::smd(nhefs_weights$race, nhefs_weights$qsmk, nhefs_weights$w_atm, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$race,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atm |> vctrs::vec_data(),
+      std.error = TRUE
+    )$std.error
   )
 
   expect_equal(
     pull_std.error(.smds, "education", "w_atm"),
-    smd::smd(nhefs_weights$education, nhefs_weights$qsmk, nhefs_weights$w_atm, std.error = TRUE)$std.error
+    smd::smd(
+      nhefs_weights$education,
+      nhefs_weights$qsmk,
+      nhefs_weights$w_atm |> vctrs::vec_data(),
+      std.error = TRUE
+    )$std.error
   )
 })
 
@@ -392,4 +541,15 @@ test_that("tidy_smd() works with `make_dummy_vars = TRUE`", {
   )
 
   expect_tidy_smd_tbl(.smds, .rows = 12)
+})
+
+test_that("tidy_smd() works with quoted variables", {
+  .smds <- tidy_smd(
+    nhefs_weights,
+    c("age", "race", "education"),
+    .group = "qsmk",
+    .wts = "w_ate"
+  )
+
+  expect_tidy_smd_tbl(.smds, .rows = 6)
 })

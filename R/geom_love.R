@@ -11,6 +11,7 @@
 #' wraps `geom_love()`. For more complex Love plots, we recommend using ggplot2
 #' directly.
 #'
+#' @inheritParams ggplot2::geom_point
 #' @param linewidth The line size, passed to [`ggplot2::geom_line()`].
 #' @param line_size Deprecated. Please use `linewidth`.
 #' @param point_size The point size, passed to [`ggplot2::geom_point()`].
@@ -48,7 +49,16 @@
 #' ) +
 #'   geom_love()
 #'
-geom_love <- function(linewidth = .8, line_size = NULL, point_size = 1.85, vline_xintercept = 0.1, vline_color = "grey70", vlinewidth = 0.6, vline_size = NULL) {
+geom_love <- function(
+  data = NULL,
+  linewidth = .8,
+  line_size = NULL,
+  point_size = 1.85,
+  vline_xintercept = 0.1,
+  vline_color = "grey70",
+  vlinewidth = 0.6,
+  vline_size = NULL
+) {
   check_installed("ggplot2")
   if (!is.null(line_size)) {
     warn("`line_size` is deprecated. Please use `linewidth`")
@@ -67,27 +77,44 @@ geom_love <- function(linewidth = .8, line_size = NULL, point_size = 1.85, vline
       color = vline_color,
       linewidth = vlinewidth
     )
-    line_geom <- ggplot2::geom_line(orientation = "y", linewidth = linewidth)
+    line_geom <- ggplot2::geom_line(
+      data = data,
+      orientation = "y",
+      linewidth = linewidth
+    )
   } else {
     vline_geom <- ggplot2::geom_vline(
       xintercept = vline_xintercept,
       color = vline_color,
       size = vlinewidth
     )
-    line_geom <- ggplot2::geom_line(orientation = "y", size = linewidth)
+    line_geom <- ggplot2::geom_line(
+      data = data,
+      orientation = "y",
+      size = linewidth
+    )
   }
 
   list(
     vline_geom,
     line_geom,
-    ggplot2::geom_point(size = point_size)
+    ggplot2::geom_point(data = data, size = point_size)
   )
 }
 
 #' @export
 #' @rdname geom_love
 #' @param .df a data frame produced by `tidy_smd()`
-love_plot <- function(.df, linewidth = .8, line_size = NULL, point_size = 1.85, vline_xintercept = 0.1, vline_color = "grey70", vlinewidth = 0.6, vline_size = NULL) {
+love_plot <- function(
+  .df,
+  linewidth = .8,
+  line_size = NULL,
+  point_size = 1.85,
+  vline_xintercept = 0.1,
+  vline_color = "grey70",
+  vlinewidth = 0.6,
+  vline_size = NULL
+) {
   check_installed("ggplot2")
   if (!is.null(line_size)) {
     warn("`line_size` is deprecated. Please use `linewidth`")

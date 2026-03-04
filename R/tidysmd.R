@@ -14,11 +14,13 @@
 #' specifications.
 #'
 #' @param .df A data frame
-#' @param .vars Variables for which to calculate SMD
-#' @param .group Grouping variable
+#' @param .vars Variables for which to calculate SMD. Can be unquoted (`x`) or
+#'   quoted (`"x"`).
+#' @param .group Grouping variable. Can be unquoted (`x`) or quoted (`"x"`).
 #' @param .wts Variables to use for weighting the SMD calculation. These can be,
 #'   for instance, propensity score weights or a binary indicator signaling
-#'   whether or not a participant was included in a matching algorithm.
+#'   whether or not a participant was included in a matching algorithm. Can be
+#'   unquoted (`x`) or quoted (`"x"`).
 #' @param include_observed Logical. If using `.wts`, also calculate the
 #'   unweighted SMD?
 #' @param include_unweighted Deprecated. Please use `include_observed`.
@@ -43,18 +45,29 @@
 #'   .group = qsmk,
 #'   .wts = c(w_ate, w_att, w_atm)
 #' )
-tidy_smd <- function(.df, .vars, .group, .wts = NULL, include_observed = TRUE, include_unweighted = NULL,
-                     na.rm = FALSE, gref = 1L, std.error = FALSE,
-                     make_dummy_vars = FALSE) {
+tidy_smd <- function(
+  .df,
+  .vars,
+  .group,
+  .wts = NULL,
+  include_observed = TRUE,
+  include_unweighted = NULL,
+  na.rm = FALSE,
+  gref = 1L,
+  std.error = FALSE,
+  make_dummy_vars = FALSE
+) {
   if (!is.null(include_unweighted)) {
-    warn("`include_unweighted` is deprecated. Please use `include_observed` instead.")
+    warn(
+      "`include_unweighted` is deprecated. Please use `include_observed` instead."
+    )
     include_observed <- include_unweighted
   }
 
   # check_weights(.wt)
   .df <- dplyr::as_tibble(.df)
   .vars <- enquo(.vars)
-  .group <- enquo(.group)
+  .group <- ensym(.group)
   .wts <- enquo(.wts)
 
   .df <- dplyr::select(.df, !!.vars, !!.group, !!.wts)
@@ -68,13 +81,27 @@ tidy_smd <- function(.df, .vars, .group, .wts = NULL, include_observed = TRUE, i
   }
 
   if (include_observed) {
-    unwts <- tidy_observed_smd(.df, .group = !!.group, .wts = !!.wts, na.rm = na.rm, gref = gref, std.error = std.error)
+    unwts <- tidy_observed_smd(
+      .df,
+      .group = !!.group,
+      .wts = !!.wts,
+      na.rm = na.rm,
+      gref = gref,
+      std.error = std.error
+    )
   } else {
     unwts <- NULL
   }
 
   if (!quo_is_null(.wts)) {
-    wts <- map_tidy_smd(.df, !!.group, !!.wts, na.rm = na.rm, gref = gref, std.error = std.error)
+    wts <- map_tidy_smd(
+      .df,
+      !!.group,
+      !!.wts,
+      na.rm = na.rm,
+      gref = gref,
+      std.error = std.error
+    )
   } else {
     wts <- NULL
   }
@@ -82,8 +109,15 @@ tidy_smd <- function(.df, .vars, .group, .wts = NULL, include_observed = TRUE, i
   dplyr::bind_rows(unwts, wts)
 }
 
-tidy_observed_smd <- function(.df, .group, .wts, na.rm = FALSE, gref = 1L, std.error = FALSE) {
-  .group <- enquo(.group)
+tidy_observed_smd <- function(
+  .df,
+  .group,
+  .wts,
+  na.rm = FALSE,
+  gref = 1L,
+  std.error = FALSE
+) {
+  .group <- ensym(.group)
   .wts <- enquo(.wts)
 
   # `summarize()` with multiple rows was  deprecated in dplyr 1.1.0
@@ -92,7 +126,13 @@ tidy_observed_smd <- function(.df, .group, .wts, na.rm = FALSE, gref = 1L, std.e
       .df,
       dplyr::across(
         c(-!!.group, -!!.wts),
-        ~ smd::smd(.x, !!.group, na.rm = na.rm, gref = gref, std.error = std.error)
+        ~ smd::smd(
+          .x,
+          !!.group,
+          na.rm = na.rm,
+          gref = gref,
+          std.error = std.error
+        )
       )
     )
   } else {
@@ -100,7 +140,13 @@ tidy_observed_smd <- function(.df, .group, .wts, na.rm = FALSE, gref = 1L, std.e
       .df,
       dplyr::across(
         c(-!!.group, -!!.wts),
-        ~ smd::smd(.x, !!.group, na.rm = na.rm, gref = gref, std.error = std.error)
+        ~ smd::smd(
+          .x,
+          !!.group,
+          na.rm = na.rm,
+          gref = gref,
+          std.error = std.error
+        )
       )
     )
   }
@@ -110,17 +156,43 @@ tidy_observed_smd <- function(.df, .group, .wts, na.rm = FALSE, gref = 1L, std.e
   dplyr::rename(.df, {{ .group }} := term)
 }
 
-map_tidy_smd <- function(.df, .group, .wts, na.rm = FALSE, gref = 1L, std.error = FALSE) {
-  .group <- enquo(.group)
+map_tidy_smd <- function(
+  .df,
+  .group,
+  .wts,
+  na.rm = FALSE,
+  gref = 1L,
+  std.error = FALSE
+) {
+  .group <- ensym(.group)
   wt_cols <- enquo(.wts)
   wt_vars <- names(tidyselect::eval_select(wt_cols, .df))
 
-  purrr::map_dfr(wt_vars, ~ tidy_weighted_smd(.df, !!.group, .wts = .x, .all_wts= !!wt_cols, na.rm = na.rm, gref = gref, std.error = std.error))
+  purrr::map_dfr(
+    wt_vars,
+    ~ tidy_weighted_smd(
+      .df,
+      !!.group,
+      .wts = .x,
+      .all_wts = !!wt_cols,
+      na.rm = na.rm,
+      gref = gref,
+      std.error = std.error
+    )
+  )
 }
 
 
-tidy_weighted_smd <- function(.df, .group, .wts, .all_wts, na.rm = FALSE, gref = 1L, std.error = FALSE) {
-  .group <- enquo(.group)
+tidy_weighted_smd <- function(
+  .df,
+  .group,
+  .wts,
+  .all_wts,
+  na.rm = FALSE,
+  gref = 1L,
+  std.error = FALSE
+) {
+  .group <- ensym(.group)
   .all_wts <- enquo(.all_wts)
   force(.wts)
   .wts_sym <- ensym(.wts)
@@ -131,7 +203,14 @@ tidy_weighted_smd <- function(.df, .group, .wts, .all_wts, na.rm = FALSE, gref =
       .df,
       dplyr::across(
         c(-!!.group, -!!.all_wts),
-        ~ smd::smd(.x, !!.group, w = !!.wts_sym, na.rm = na.rm, gref = gref, std.error = std.error)
+        ~ smd::smd(
+          .x,
+          !!.group,
+          w = vctrs::vec_data(!!.wts_sym),
+          na.rm = na.rm,
+          gref = gref,
+          std.error = std.error
+        )
       )
     )
   } else {
@@ -139,7 +218,14 @@ tidy_weighted_smd <- function(.df, .group, .wts, .all_wts, na.rm = FALSE, gref =
       .df,
       dplyr::across(
         c(-!!.group, -!!.all_wts),
-        ~ smd::smd(.x, !!.group, w = !!.wts_sym, na.rm = na.rm, gref = gref, std.error = std.error)
+        ~ smd::smd(
+          .x,
+          !!.group,
+          w = vctrs::vec_data(!!.wts_sym),
+          na.rm = na.rm,
+          gref = gref,
+          std.error = std.error
+        )
       )
     )
   }
@@ -161,12 +247,19 @@ pivot_smd <- function(.df, weights_col) {
 
   .df <- dplyr::mutate(.df, method = weights_col)
 
-  dplyr::select(.df, variable, method, term, smd = estimate, dplyr::any_of("std.error"))
+  dplyr::select(
+    .df,
+    variable,
+    method,
+    term,
+    smd = estimate,
+    dplyr::any_of("std.error")
+  )
 }
 
 model_matrix <- function(.df) {
   mod_matrix <- dplyr::as_tibble(model.matrix(
-    ~ .,
+    ~.,
     .df
   ))
 
